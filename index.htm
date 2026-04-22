@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AirGuard Dashboard TCC</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>AirGuard - Dashboard TCC</h1>
+      <p>Análise temporal, eventos e estatísticas do sistema</p>
+    </div>
+
+    <div class="panel">
+      <h2>Filtros</h2>
+
+      <div class="filters-grid">
+        <div class="field">
+          <label for="sensorSelect">Sensor</label>
+          <select id="sensorSelect"></select>
+        </div>
+
+        <div class="field">
+          <label for="startDateInput">Data inicial</label>
+          <input type="date" id="startDateInput" />
+        </div>
+
+        <div class="field">
+          <label for="startTimeInput">Hora inicial</label>
+          <input type="time" id="startTimeInput" />
+        </div>
+
+        <div class="field">
+          <label for="endDateInput">Data final</label>
+          <input type="date" id="endDateInput" />
+        </div>
+
+        <div class="field">
+          <label for="endTimeInput">Hora final</label>
+          <input type="time" id="endTimeInput" />
+        </div>
+      </div>
+
+      <div class="toolbar">
+        <button id="applyBtn">Aplicar filtros</button>
+      </div>
+
+      <div id="pageStatus" class="status-text">Carregando dashboard...</div>
+    </div>
+
+    <div class="panel">
+      <h2>Estado Atual</h2>
+      <div id="currentState" class="hero-card hero-limpo">--</div>
+      <div class="meta-grid" id="metaGrid"></div>
+    </div>
+
+    <div class="panel">
+      <h2>KPIs</h2>
+      <div class="kpi-grid" id="kpiGrid"></div>
+    </div>
+
+    <div class="panel">
+      <h2>Evolução Temporal</h2>
+      <div class="chart-wrap">
+        <canvas id="historyChart"></canvas>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>Estatísticas do Período</h2>
+      <div class="stats-grid" id="statsGrid"></div>
+    </div>
+
+    <div class="panel">
+      <h2>Eventos</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Data/Hora</th>
+              <th>Tipo</th>
+              <th>De</th>
+              <th>Para</th>
+            </tr>
+          </thead>
+          <tbody id="eventsTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script src="config.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
