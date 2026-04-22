@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>AirGuard Dashboard TCC</title>
+  <title>AirGuard Dashboard TCC v2</title>
   <link rel="stylesheet" href="styles.css" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
@@ -11,7 +11,7 @@
   <div class="container">
     <div class="header">
       <h1>AirGuard - Dashboard TCC</h1>
-      <p>Análise temporal, eventos e estatísticas do sistema</p>
+      <p>Análise temporal, eventos, thresholds e interpretação do sistema</p>
     </div>
 
     <div class="panel">
@@ -46,6 +46,7 @@
 
       <div class="toolbar">
         <button id="applyBtn">Aplicar filtros</button>
+        <button id="exportCsvBtn" class="secondary-btn">Exportar CSV</button>
       </div>
 
       <div id="pageStatus" class="status-text">Carregando dashboard...</div>
@@ -67,6 +68,9 @@
       <div class="chart-wrap">
         <canvas id="historyChart"></canvas>
       </div>
+      <div class="helper-text">
+        O gráfico inclui leituras de CO e gás combustível, além das linhas de threshold configuradas no sensor.
+      </div>
     </div>
 
     <div class="panel">
@@ -75,7 +79,12 @@
     </div>
 
     <div class="panel">
-      <h2>Eventos</h2>
+      <h2>Interpretação Edge vs Cloud</h2>
+      <div class="analysis-grid" id="analysisGrid"></div>
+    </div>
+
+    <div class="panel">
+      <h2>Eventos do Período</h2>
       <div class="table-wrap">
         <table>
           <thead>
