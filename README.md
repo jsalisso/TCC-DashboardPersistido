@@ -1,4 +1,4 @@
-# 🌐 AirGuard Dashboard TCC v2
+# 🌐 AirGuard Dashboard TCC v3
 
 Dashboard analítico desenvolvido para o projeto **AirGuard**, com foco em visualização avançada de dados IoT, análise temporal, eventos e avaliação de comportamento do sistema.
 
