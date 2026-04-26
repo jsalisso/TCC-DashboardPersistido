@@ -13,6 +13,7 @@ const currentState = document.getElementById("currentState");
 const metaGrid = document.getElementById("metaGrid");
 const kpiGrid = document.getElementById("kpiGrid");
 const statsGrid = document.getElementById("statsGrid");
+const latencyGrid = document.getElementById("latencyGrid");
 const analysisGrid = document.getElementById("analysisGrid");
 const eventsTableBody = document.getElementById("eventsTableBody");
 
@@ -101,6 +102,13 @@ async function loadEvents(sensorId, start, end) {
   return fetchJson(url.toString());
 }
 
+async function loadLatency(sensorId, start, end) {
+  const url = new URL(`${apiBase}/api/latency/${sensorId}`);
+  if (start) url.searchParams.set("start", start);
+  if (end) url.searchParams.set("end", end);
+  return fetchJson(url.toString());
+}
+
 function renderCurrentState(doc) {
   const status = String(doc.status || "LIMPO").toUpperCase();
 
@@ -156,17 +164,42 @@ function renderStats(statsResponse) {
   `;
 }
 
-function renderAnalysis(latest, statsResponse, eventsResponse) {
+function renderLatency(latencyResponse) {
+  const s = latencyResponse.summary;
+
+  if (!s) {
+    latencyGrid.innerHTML = `<div class="cardish"><div class="value">Sem dados de latência para o período.</div></div>`;
+    return;
+  }
+
+  latencyGrid.innerHTML = `
+    <div class="cardish"><div class="label">Total de amostras</div><div class="value">${s.total}</div></div>
+    <div class="cardish"><div class="label">Latência média</div><div class="value">${formatNumber(s.avg_latency_ms, 0)} ms</div></div>
+    <div class="cardish"><div class="label">Latência mínima</div><div class="value">${formatNumber(s.min_latency_ms, 0)} ms</div></div>
+    <div class="cardish"><div class="label">Latência máxima</div><div class="value">${formatNumber(s.max_latency_ms, 0)} ms</div></div>
+    <div class="cardish"><div class="label">Primeira amostra</div><div class="value">${formatDate(s.first_seen)}</div></div>
+    <div class="cardish"><div class="label">Última amostra</div><div class="value">${formatDate(s.last_seen)}</div></div>
+  `;
+}
+
+function renderAnalysis(latest, statsResponse, eventsResponse, latencyResponse) {
   const s = statsResponse.stats;
+  const latency = latencyResponse.summary;
   const eventCount = (eventsResponse.items || []).length;
 
   let edgeSummary = "O processamento local (edge) no ESP32 permite resposta imediata do sistema com ativação do buzzer e mudança de status no dispositivo.";
   let cloudSummary = "A camada em nuvem consolida histórico, eventos e estatísticas, permitindo análise temporal e acompanhamento remoto.";
   let viabilitySummary = "A solução demonstra viabilidade para pequenos negócios ao combinar baixo custo, telemetria remota e lógica local de alerta.";
   let behaviorSummary = "Sem dados suficientes para interpretação do comportamento no período.";
+  let latencySummary = "Sem dados de latência disponíveis para o período selecionado.";
 
   if (s) {
     behaviorSummary = `No período selecionado, foram registradas ${s.total} leituras. O CO variou de ${formatNumber(s.min_co_ppm, 2)} a ${formatNumber(s.max_co_ppm, 2)} ppm, enquanto o gás variou de ${formatNumber(s.min_gas_ppm, 2)} a ${formatNumber(s.max_gas_ppm, 2)} ppm.`;
+  }
+
+  if (latency) {
+    latencySummary = `A latência média observada entre o ESP32 e o backend em nuvem foi de ${formatNumber(latency.avg_latency_ms, 0)} ms, com mínimo de ${formatNumber(latency.min_latency_ms, 0)} ms e máximo de ${formatNumber(latency.max_latency_ms, 0)} ms.`;
+    cloudSummary = `${cloudSummary} No período analisado, a persistência/recepção em nuvem apresentou latência média de ${formatNumber(latency.avg_latency_ms, 0)} ms.`;
   }
 
   analysisGrid.innerHTML = `
@@ -177,6 +210,10 @@ function renderAnalysis(latest, statsResponse, eventsResponse) {
     <div class="cardish">
       <div class="label">Cloud</div>
       <div class="value small">${safe(cloudSummary)}</div>
+    </div>
+    <div class="cardish">
+      <div class="label">Latência</div>
+      <div class="value small">${safe(latencySummary)}</div>
     </div>
     <div class="cardish">
       <div class="label">Comportamento observado</div>
@@ -346,18 +383,20 @@ async function loadDashboard() {
   pageStatus.textContent = "Carregando dashboard...";
 
   try {
-    const [latest, history, stats, events] = await Promise.all([
+    const [latest, history, stats, events, latency] = await Promise.all([
       loadLatest(sensorId),
       loadHistory(sensorId, start, end),
       loadStatsRange(sensorId, start, end),
-      loadEvents(sensorId, start, end)
+      loadEvents(sensorId, start, end),
+      loadLatency(sensorId, start, end)
     ]);
 
     renderCurrentState(latest);
     renderHistoryChart(history, latest);
     renderStats(stats);
+    renderLatency(latency);
     renderEvents(events);
-    renderAnalysis(latest, stats, events);
+    renderAnalysis(latest, stats, events, latency);
 
     pageStatus.textContent = "Dashboard carregado com sucesso.";
   } catch (err) {

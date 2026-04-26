@@ -10,8 +10,8 @@
 <body>
   <div class="container">
     <div class="header">
-      <h1>AirGuard - Dashboard TCC</h1>
-      <p>Análise temporal, eventos, thresholds e interpretação do sistema</p>
+      <h1>AirGuard - Dashboard TCC - v3</h1>
+      <p>Análise temporal, eventos, thresholds, latência e interpretação do sistema</p>
     </div>
 
     <div class="panel">
@@ -76,6 +76,14 @@
     <div class="panel">
       <h2>Estatísticas do Período</h2>
       <div class="stats-grid" id="statsGrid"></div>
+    </div>
+
+    <div class="panel">
+      <h2>Latência Edge → Cloud</h2>
+      <div class="stats-grid" id="latencyGrid"></div>
+      <div class="helper-text">
+        Mede o intervalo entre a publicação do evento pelo ESP32 e o recebimento pelo backend em nuvem.
+      </div>
     </div>
 
     <div class="panel">
